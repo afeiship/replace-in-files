@@ -13,12 +13,21 @@
     "pretty": "prettier --write bin"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": ["npm run pretty"]
+    "*.{js,jsx,ts,tsx}": [
+      "npm run pretty"
+    ]
   },
   "keywords": [
     "cli",
-    "javascript",
-    "templates"
+    "command",
+    "files",
+    "replace",
+    "yaml",
+    "yml",
+    "rifc",
+    "node",
+    "nodejs",
+    "rif"
   ],
   "homepage": "https://js.work",
   "author": {
