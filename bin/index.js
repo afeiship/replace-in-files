@@ -76,6 +76,8 @@ class CliApp {
         this.log('🌈 Replacement results:', results);
       });
     }
+
+    console.log('✅ Replacement done.');
   }
 
   cmdInit() {
