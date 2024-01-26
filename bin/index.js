@@ -11,15 +11,14 @@ import '@jswork/next-yaml-configuration';
 import '@jswork/next-literal-tmpl';
 
 const __dirname = new URL('../', import.meta.url).pathname;
-const env = process.env;
 const pkg = loadJsonFileSync(join(__dirname, 'package.json'));
 const program = new Command();
 const initConfigFile = join(__dirname, 'config.init.yaml');
+const env = process.env;
 const cwd = process.cwd();
 
 // predefined context:
 const PROJECT_NAME = cwd.split('/').reverse()[0];
-
 
 program.version(pkg.version);
 program
@@ -65,8 +64,8 @@ class CliApp {
     const replacements = this.getReplacements();
     // 3. do replace
     for (let replacement of replacements) {
-      let { from ,to } = replacement;
-      if(!to && from.includes('${')) to = nx.literalTmpl(from, this.context);
+      let { from, to } = replacement;
+      if (!to && from.includes('${')) to = nx.literalTmpl(from, this.context);
       const options = { files, from, to };
       await replaceInFile(options).then((results) => {
         if (verbose) console.log('⚡️Replacement results:', results);
@@ -81,9 +80,9 @@ class CliApp {
     const shouldInit = !fs.existsSync(dest) || force;
     if (shouldInit) {
       fs.copyFileSync(initConfigFile, dest);
-      if(verbose) console.log('✅ Init config file:', this.opts.config);
+      if (verbose) console.log('✅ Init config file:', this.opts.config);
     } else {
-      if(verbose) console.log('😂 Config file exists, please use -f option.');
+      if (verbose) console.log('😂 Config file exists, please use -f option.');
     }
   }
 

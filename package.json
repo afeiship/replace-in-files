@@ -10,11 +10,10 @@
   "scripts": {
     "release": "release-it",
     "prepare": "husky install",
-    "pretty": "prettier --write bin",
-    "lint": "eslint bin --ext ts,tsx --report-unused-disable-directives --max-warnings 10"
+    "pretty": "prettier --write bin"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": ["npm run pretty", "npm run lint"]
+    "*.{js,jsx,ts,tsx}": ["npm run pretty"]
   },
   "keywords": [
     "cli",
