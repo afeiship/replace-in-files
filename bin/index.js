@@ -68,7 +68,7 @@ class CliApp {
       if (!to && from.includes('${')) to = nx.literalTmpl(from, this.context);
       const options = { files, from, to };
       await replaceInFile(options).then((results) => {
-        if (verbose) console.log('⚡️Replacement results:', results);
+        if (verbose) console.log('🌈 Replacement results:', results);
       });
     }
   }
