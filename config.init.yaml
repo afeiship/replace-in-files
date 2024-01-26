@@ -8,5 +8,5 @@ files:
 replacements:
   - from: /aaa/g
     to: AAA
-  - from: '${env.HOME}'
-  - from: '${pkg.version}'
+  - item: '${env.HOME}'
+  - item: '${pkg.version}'

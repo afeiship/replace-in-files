@@ -64,15 +64,16 @@ class CliApp {
     const replacements = this.getReplacements();
     // 3. do replace
     for (let replacement of replacements) {
-      let { from, to } = replacement;
-      if (!to && from.includes('${')) {
-        to = nx.literalTmpl(from, this.context);
-      } else {
-        to = nx.literalTmpl(to, this.context);
-      }
+      let { from, to, item } = replacement;
+      if (item) from = to = nx.literalTmpl(item, this.context);
+      from = nx.literalTmpl(from, this.context);
+      to = nx.literalTmpl(to, this.context);
+      // test if item,from, to endsWith '/g'
+      if (from.endsWith('/g')) from = new RegExp(from.replace(/\/g$/, '').slice(1), 'g');
       const options = { files, from, to };
+      this.log('🌈 Replacement options:', options);
       await replaceInFile(options).then((results) => {
-        if (verbose) console.log('🌈 Replacement results:', results);
+        this.log('🌈 Replacement results:', results);
       });
     }
   }
@@ -84,10 +85,15 @@ class CliApp {
     const shouldInit = !fs.existsSync(dest) || force;
     if (shouldInit) {
       fs.copyFileSync(initConfigFile, dest);
-      if (verbose) console.log('✅ Init config file:', this.opts.config);
+      console.log('✅ Init config file:', this.opts.config);
     } else {
-      if (verbose) console.log('😂 Config file exists, please use -f option.');
+      console.log('😂 Config file exists, please use -f option.');
     }
+  }
+
+  log(...args) {
+    const { verbose } = this.opts;
+    if (verbose) console.log(...args);
   }
 
   async run() {
