@@ -1,11 +1,12 @@
 name: replace-in-files
 files:
-  - 'src/**/*.{js,jsx,ts,tsx}'
+  - 'src/**/*.js'
   - '.*'
+  - '*'
   - '!node_modules'
-  - '!config.yaml'
+  - '!rif.config.yaml'
 replacements:
-  - from: 'aaa'
-    to: 'AAA'
+  - from: /aaa/g
+    to: AAA
   - from: '${env.HOME}'
   - from: '${pkg.version}'
