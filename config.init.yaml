@@ -1,5 +1,4 @@
 name: replace-in-files
-dryRun: false
 files:
   - 'src/**/*.{js,jsx,ts,tsx}'
   - '.*'
@@ -8,3 +7,7 @@ files:
 replacements:
   - from: 'aaa'
     to: 'AAA'
+  - from: 'env:HOME'
+    to: '${env:HOME}'
+  - from: 'pkg:VERSION'
+    to: '${pkg:version}'

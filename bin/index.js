@@ -8,8 +8,10 @@ import fs from 'node:fs';
 import replaceInFile from 'replace-in-file';
 
 import '@jswork/next-yaml-configuration';
+import '@jswork/next-literal-tmpl';
 
 const __dirname = new URL('../', import.meta.url).pathname;
+const env = process.env;
 const pkg = loadJsonFileSync(join(__dirname, 'package.json'));
 const program = new Command();
 const initConfigFile = join(__dirname, 'config.init.yaml');
@@ -17,7 +19,8 @@ const initConfigFile = join(__dirname, 'config.init.yaml');
 program.version(pkg.version);
 program
   .option('-i, --init', 'Init config file.', false)
-  .option('-c, --config', 'Config file path.', 'config.yaml')
+  .option('-f, --force', 'Force init config file.', false)
+  .option('-c, --config', 'Config file path.', 'rif.config.yaml')
   .option('-v, --verbose', 'Verbose mode.', false)
   .parse(process.argv);
 
@@ -27,12 +30,14 @@ program
  */
 
 class CliApp {
+  get configFile() {
+    return join(process.cwd(), this.opts.config);
+  }
+
   constructor() {
     this.args = program.args;
     this.opts = program.opts();
-    this.cfg = new nx.YamlConfiguration({
-      path: join(process.cwd(), this.opts.config),
-    });
+    this.context = { pkg, env };
   }
 
   getFiles() {
@@ -44,34 +49,42 @@ class CliApp {
     return this.cfg.get('replacements');
   }
 
-  cmdReplace() {
-    const { verbose } = this.opts;
+  async cmdReplace() {
+    const { init, verbose } = this.opts;
+    if (init) return;
+    // 0. load config
+    this.cfg = this.cfg || new nx.YamlConfiguration({ path: this.configFile });
     // 1. get files
     const files = this.getFiles();
     // 2. replace by replacement
     const replacements = this.getReplacements();
-
     // 3. do replace
     for (let replacement of replacements) {
-      replaceInFile({
-        files,
-        ...replacement,
-      }).then((results) => {
+      let { from ,to } = replacement;
+      if(!to && from.includes('${')) to = nx.literalTmpl(from, this.context);
+      const options = { files, from, to };
+      await replaceInFile(options).then((results) => {
         if (verbose) console.log('⚡️Replacement results:', results);
       });
     }
   }
 
   cmdInit() {
-    const { init, verbose } = this.opts;
+    const { init, force, verbose } = this.opts;
     if (!init) return;
-    fs.copyFileSync(initConfigFile, this.opts.config);
-    if (verbose) console.log('⚡️Init config file:', this.opts.config);
+    const dest = join(process.cwd(), this.opts.config);
+    const shouldInit = !fs.existsSync(dest) || force;
+    if (shouldInit) {
+      fs.copyFileSync(initConfigFile, dest);
+      if(verbose) console.log('✅ Init config file:', this.opts.config);
+    } else {
+      if(verbose) console.log('😂 Config file exists, please use -f option.');
+    }
   }
 
-  run() {
+  async run() {
     this.cmdInit();
-    this.cmdReplace();
+    await this.cmdReplace();
   }
 }
 

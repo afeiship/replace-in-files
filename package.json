@@ -8,7 +8,13 @@
     "rifc": "./bin/index.js"
   },
   "scripts": {
-    "release": "release-it"
+    "release": "release-it",
+    "prepare": "husky install",
+    "pretty": "prettier --write bin",
+    "lint": "eslint bin --ext ts,tsx --report-unused-disable-directives --max-warnings 10"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": ["npm run pretty", "npm run lint"]
   },
   "keywords": [
     "cli",
@@ -23,10 +29,13 @@
   "license": "MIT",
   "generator": "@jswork/generator-github",
   "devDependencies": {
+    "husky": "^9.0.6",
+    "lint-staged": "^15.2.0",
     "prettier": "^3.2.4"
   },
   "dependencies": {
     "@jswork/next": "^1.2.2",
+    "@jswork/next-literal-tmpl": "^1.0.2",
     "@jswork/next-yaml-configuration": "^1.0.3",
     "commander": "^11.1.0",
     "fast-glob": "^3.3.2",
