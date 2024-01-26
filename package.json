@@ -10,7 +10,11 @@
   "scripts": {
     "release": "release-it"
   },
-  "keywords": ["cli", "javascript", "templates"],
+  "keywords": [
+    "cli",
+    "javascript",
+    "templates"
+  ],
   "homepage": "https://js.work",
   "author": {
     "name": "aric",
@@ -22,7 +26,11 @@
     "prettier": "^3.2.4"
   },
   "dependencies": {
+    "@jswork/next": "^1.2.2",
+    "@jswork/next-yaml-configuration": "^1.0.3",
     "commander": "^11.1.0",
-    "load-json-file": "^7.0.1"
+    "fast-glob": "^3.3.2",
+    "load-json-file": "^7.0.1",
+    "replace-in-file": "^7.1.0"
   }
 }

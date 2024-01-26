@@ -1,0 +1,8 @@
+name: replace-in-files
+dryRun: false
+files:
+  - '*'
+  - '.*'
+replacements:
+  - from: 'aaa'
+    to: 'AAA'
