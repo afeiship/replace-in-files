@@ -1,0 +1,28 @@
+{
+  "name": "@jswork/replace-in-files",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Cli base on nodejs.",
+  "type": "module",
+  "bin": {
+    "rifc": "./bin/index.js"
+  },
+  "scripts": {
+    "release": "release-it"
+  },
+  "keywords": ["cli", "javascript", "templates"],
+  "homepage": "https://js.work",
+  "author": {
+    "name": "aric",
+    "email": "1290657123@qq.com"
+  },
+  "license": "MIT",
+  "generator": "@jswork/generator-github",
+  "devDependencies": {
+    "prettier": "^3.2.4"
+  },
+  "dependencies": {
+    "commander": "^11.1.0",
+    "load-json-file": "^7.0.1"
+  }
+}
