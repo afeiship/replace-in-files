@@ -2,7 +2,7 @@
   "name": "@jswork/replace-in-files",
   "private": true,
   "version": "1.0.0",
-  "description": "Cli base on nodejs.",
+  "description": "Replace in files for node.",
   "type": "module",
   "bin": {
     "rifc": "./bin/index.js"

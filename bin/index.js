@@ -15,6 +15,11 @@ const env = process.env;
 const pkg = loadJsonFileSync(join(__dirname, 'package.json'));
 const program = new Command();
 const initConfigFile = join(__dirname, 'config.init.yaml');
+const cwd = process.cwd();
+
+// predefined context:
+const PROJECT_NAME = cwd.split('/').reverse()[0];
+
 
 program.version(pkg.version);
 program
@@ -31,13 +36,13 @@ program
 
 class CliApp {
   get configFile() {
-    return join(process.cwd(), this.opts.config);
+    return join(cwd, this.opts.config);
   }
 
   constructor() {
     this.args = program.args;
     this.opts = program.opts();
-    this.context = { pkg, env };
+    this.context = { pkg, env, PROJECT_NAME };
   }
 
   getFiles() {
@@ -72,7 +77,7 @@ class CliApp {
   cmdInit() {
     const { init, force, verbose } = this.opts;
     if (!init) return;
-    const dest = join(process.cwd(), this.opts.config);
+    const dest = join(cwd, this.opts.config);
     const shouldInit = !fs.existsSync(dest) || force;
     if (shouldInit) {
       fs.copyFileSync(initConfigFile, dest);
