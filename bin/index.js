@@ -69,6 +69,7 @@ class CliApp {
       to = nx.literalTmpl(to, this.context);
       // test if item,from, to endsWith '/g'
       if (from.endsWith('/g')) from = new RegExp(from.replace(/\/g$/, '').slice(1), 'g');
+      if (from.starsWith('$') && from.includes('{')) from = new RegExp(from, 'g');
       const options = { files, from, to };
       this.log('🌈 Replacement options:', options);
       await replaceInFile(options).then((results) => {
