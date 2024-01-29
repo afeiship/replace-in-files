@@ -65,8 +65,7 @@ class CliApp {
     // 3. do replace
     for (let replacement of replacements) {
       let { from, to, item } = replacement;
-      if (item) from = to = nx.literalTmpl(item, this.context);
-      from = nx.literalTmpl(from, this.context);
+      if (item) from = to = item;
       to = nx.literalTmpl(to, this.context);
       // test if item,from, to endsWith '/g'
       if (from.endsWith('/g')) from = new RegExp(from.replace(/\/g$/, '').slice(1), 'g');
