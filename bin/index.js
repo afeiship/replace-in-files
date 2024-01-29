@@ -67,7 +67,6 @@ class CliApp {
       let { from, to, item } = replacement;
       if (item) from = to = item;
       to = nx.literalTmpl(to, this.context);
-      console.log('🌈 Replacement:', { from, to });
       // test if item,from, to endsWith '/g'
       if (from.endsWith('/g')) from = new RegExp(from.replace(/\/g$/, '').slice(1), 'g');
       // ${abc} -> new RegExt('\\${abc}', g);
