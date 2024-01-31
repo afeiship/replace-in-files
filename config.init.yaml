@@ -10,3 +10,5 @@ replacements:
     to: AAA
   - item: '${env.HOME}'
   - item: '${pkg.version}'
+  - from: __USAGE__
+    to: $(rifc -h)
