@@ -74,7 +74,8 @@ class CliApp {
       if (from.startsWith('$') && from.includes('{')) from = new RegExp(`\\${from}`, 'g');
       // process to is $(cmd) case:
       if (to.startsWith('$(') && to.endsWith(')')) {
-        to = execSync(to.slice(2, -1), { encoding: 'utf8' });
+        const cmd = to.slice(2, -1);
+        to = execSync(cmd, { encoding: 'utf8' });
       }
 
       const options = { files, from, to };
