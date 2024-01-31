@@ -68,12 +68,16 @@ class CliApp {
       let { from, to, item } = replacement;
       if (item) from = to = item;
       to = nx.literalTmpl(to, this.context);
-      // test if item,from, to endsWith '/g'
-      if (from.endsWith('/g')) from = new RegExp(from.replace(/\/g$/, '').slice(1), 'g');
-      // ${abc} -> new RegExt('\\${abc}', g);
-      if (from.startsWith('$') && from.includes('{')) from = new RegExp(`\\${from}`, 'g');
+      switch (true) {
+        case from?.endsWith('/g'):
+          from = new RegExp(from.replace(/\/g$/, '').slice(1), 'g');
+          break;
+        case from?.startsWith('$') && from.includes('{'):
+          from = new RegExp(`\\${from}`, 'g');
+          break;
+      }
       // process to is $(cmd) case:
-      if (to.startsWith('$(') && to.endsWith(')')) {
+      if (to?.startsWith('$(') && to.endsWith(')')) {
         const cmd = to.slice(2, -1);
         to = execSync(cmd, { encoding: 'utf8' });
       }
