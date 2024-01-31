@@ -68,6 +68,7 @@ class CliApp {
       let { from, to, item } = replacement;
       if (item) from = to = item;
       to = nx.literalTmpl(to, this.context);
+
       switch (true) {
         case from?.endsWith('/g'):
           from = new RegExp(from.replace(/\/g$/, '').slice(1), 'g');
@@ -75,11 +76,10 @@ class CliApp {
         case from?.startsWith('$') && from.includes('{'):
           from = new RegExp(`\\${from}`, 'g');
           break;
-      }
-      // process to is $(cmd) case:
-      if (to?.startsWith('$(') && to.endsWith(')')) {
-        const cmd = to.slice(2, -1);
-        to = execSync(cmd, { encoding: 'utf8' });
+        // process to is $(cmd) case:
+        case to?.startsWith('$(') && to.endsWith(')'):
+          to = execSync(to.slice(2, -1), { encoding: 'utf8' });
+          break;
       }
 
       const options = { files, from, to };
