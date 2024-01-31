@@ -3,6 +3,7 @@
 import { Command } from 'commander';
 import { join } from 'path';
 import { loadJsonFileSync } from 'load-json-file';
+import { execSync } from 'child_process';
 import fg from 'fast-glob';
 import fs from 'node:fs';
 import replaceInFile from 'replace-in-file';
