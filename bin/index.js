@@ -47,7 +47,7 @@ class CliApp {
 
   getFiles() {
     const globs = this.cfg.get('files') || '*';
-    return fg.glob.sync(globs);
+    return fg.glob.sync(globs, { globstar: true });
   }
 
   getReplacements() {
