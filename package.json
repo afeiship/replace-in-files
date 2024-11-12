@@ -9,7 +9,7 @@
   },
   "scripts": {
     "release": "release-it",
-    "prepare": "husky install",
+    "prepare": "husky",
     "pretty": "prettier --write bin"
   },
   "lint-staged": {
