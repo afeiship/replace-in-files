@@ -1,0 +1,39 @@
+# replace-in-files
+
+> A Node.js CLI tool (`rifc`) that performs text replacements across many files driven by a YAML config file.
+
+`replace-in-files` (npm package `@jswork/replace-in-files`, command `rifc`) lets you declare file globs and a list of replacements in one config file and run them all at once. It is built with `commander` (CLI), `fast-glob` (file discovery, globstar enabled), `replace-in-file` (the actual replacement engine), and `@jswork/next` utilities for YAML config loading and literal-template interpolation.
+
+CLI options: `-V, --version`, `-i, --init` (create a config file), `-f, --force` (overwrite an existing config when initializing), `-c, --config <path>` (config file path, default `rif.config.yaml`), `-v, --verbose`, `-h, --help`. Running `rifc` with no `--init` performs the replacements.
+
+The config (`rif.config.yaml` by default) has two keys:
+- `files`: a list of glob patterns matched with `fast-glob` (`globstar: true`). Patterns starting with `!` are negations.
+- `replacements`: a list of replacement rules. Each rule is `{ from, to }`, or the shorthand `{ item: X }` where `from === to === X`.
+
+The `from`/`to` values are interpreted specially by `bin/index.js`:
+- A `from` ending in `/g` (e.g. `/aaa/g`) is treated as a global regular expression.
+- A `from` starting with `$` and containing `{` is converted into a RegExp escaped and applied globally.
+- A `to` wrapped as `$(cmd args)` is executed via `child_process.execSync` and its stdout is used as the replacement value.
+- `to` is first interpolated through a literal template with the context `{ pkg, env, PROJECT_NAME }`, so values like `${env.HOME}`, `${pkg.version}`, and `${PROJECT_NAME}` resolve to runtime values (`PROJECT_NAME` is the current directory's basename).
+
+## Core
+
+- [CLI implementation](bin/index.js): The entire program logic — option parsing, config loading, glob matching, replacement-rule interpretation (regex / template / command substitution), and file rewriting. This is the single source of truth for behavior.
+- [Init config template](config.init.yaml): The YAML config written by `rifc --init`. Doubles as a worked example showing all supported replacement forms (regex, env/pkg templates, command substitution).
+
+## Documentation
+
+- [README](README.md): Brief usage and the `rifc -h` output.
+- [Package manifest](package.json): Package metadata, the `rifc` bin entry, npm scripts (`release`, `prepare`, `pretty`), lint-staged rules, and runtime/dev dependencies.
+
+## Configuration
+
+- [Prettier config](.prettierrc): Code formatting rules (singleQuote, printWidth 100, etc.) applied by `npm run pretty` via the pre-commit hook.
+- [Release config](.release-it.json): `release-it` settings for versioning and GitHub releases.
+- [npm-check-updates config](.ncurc.json): `ncu` settings scoped to `@jswork` / `@afeiship` packages.
+- [Git hooks](.husky/pre-commit): Pre-commit hook running `npx lint-staged`.
+- [Git ignore](.gitignore): Ignored paths (note: `config.yaml` is ignored — use `rif.config.yaml`).
+
+## Optional
+
+- [Lockfile](pnpm-lock.yaml): Resolved dependency versions; useful for exact version archaeology but safe to skip.
