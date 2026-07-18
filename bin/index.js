@@ -93,9 +93,11 @@ class CliApp {
         case from?.startsWith('$') && from.includes('{'):
           from = new RegExp(`\\${from}`, 'g');
           break;
-        // process to is $(cmd) case:
+        // process to is $(cmd) / $(shortcut) case:
         case to?.startsWith('$(') && to.endsWith(')'):
-          to = execSync(to.slice(2, -1), { encoding: 'utf8' });
+          const inner = to.slice(2, -1).trim();
+          const resolved = SHORTCUTS[inner];
+          to = execSync(resolved || inner, { encoding: 'utf8' }).trim();
           break;
       }
 
