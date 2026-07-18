@@ -43,7 +43,11 @@
   },
   "dependencies": {
     "@jswork/next": "^1.2.10",
+    "@jswork/next-deep-assign": "^1.0.5",
+    "@jswork/next-deep-each": "^1.0.6",
     "@jswork/next-literal-tmpl": "^1.0.2",
+    "@jswork/next-object-operator": "^1.0.2",
+    "@jswork/next-secret-tmpl": "^1.0.1",
     "@jswork/next-yaml-configuration": "^1.0.3",
     "commander": "^11.1.0",
     "fast-glob": "^3.3.2",

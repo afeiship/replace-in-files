@@ -8,8 +8,26 @@ import fg from 'fast-glob';
 import fs from 'node:fs';
 import replaceInFile from 'replace-in-file';
 
-import '@jswork/next-yaml-configuration';
-import '@jswork/next-literal-tmpl';
+import nx from '@jswork/next';
+import nxDeepAssign from '@jswork/next-deep-assign';
+import nxDeepEach from '@jswork/next-deep-each';
+import nxObjectOperator from '@jswork/next-object-operator';
+import nxSecretTmpl from '@jswork/next-secret-tmpl';
+
+// Register methods on nx to fix ESM/CJS interop in upstream IIFE packages
+// (upstream uses: var fn = nx.xxx || require('@jswork/next-xxx'))
+// ESM import returns { default: fn } wrapper, need to unwrap .default
+// NOTE: Must use dynamic import for next-yaml-configuration so these
+// registrations happen BEFORE the IIFE side effects run.
+// NOTE: 'deepAssgin' (no 'i') matches the upstream typo in next-abstract-configuration
+nx.deepAssgin = nx.deepAssgin || nxDeepAssign.default || nxDeepAssign;
+nx.deepAssigin = nx.deepAssigin || nxDeepAssign.default || nxDeepAssign;
+nx.deepEach = nx.deepEach || nxDeepEach.default || nxDeepEach;
+nx.DataOperator = nx.DataOperator || nxObjectOperator.default || nxObjectOperator;
+nx.secretTmpl = nx.secretTmpl || nxSecretTmpl.default || nxSecretTmpl;
+
+await import('@jswork/next-yaml-configuration');
+await import('@jswork/next-literal-tmpl');
 
 const __dirname = new URL('../', import.meta.url).pathname;
 const pkg = loadJsonFileSync(join(__dirname, 'package.json'));
@@ -42,7 +60,7 @@ program.version(pkg.version);
 program
   .option('-i, --init', 'Init config file.', false)
   .option('-f, --force', 'Force init config file.', false)
-  .option('-c, --config', 'Config file path.', 'rif.config.yaml')
+  .option('-c, --config <path>', 'Config file path.', 'rif.config.yaml')
   .option('-v, --verbose', 'Verbose mode.', false)
   .parse(process.argv);
 
@@ -53,7 +71,7 @@ program
 
 class CliApp {
   get configFile() {
-    return join(cwd, this.opts.config);
+    return this.opts.config.startsWith('/') ? this.opts.config : join(cwd, this.opts.config);
   }
 
   constructor() {
