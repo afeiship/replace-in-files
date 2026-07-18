@@ -29,6 +29,7 @@
 - **正则表达式**：`from` 以 `/g` 结尾时（如 `/aaa/g`），会被解析为全局正则表达式
 - **变量模式**：`from` 以 `$` 开头且包含 `{` 时，会被转义为 RegExp 并全局匹配
 - **命令替换**：`to` 以 `$(` 开头且以 `)` 结尾时（如 `$(git rev-parse HEAD)`），会通过 `child_process.execSync` 执行命令，将 stdout 作为替换值
+- **命令简写**：`to` 中 `$(xxx.yyy)` 格式的 dot-notation 简写会通过内置映射表展开为完整 shell 命令再执行。支持的简写包括：`git.email`、`git.user`、`git.remote`、`git.branch`、`git.hash`、`npm.name`、`npm.version`、`npm.description`、`node.version`、`date.year`、`date.today`。未匹配的 `$(...)` 内容仍按原有行为直接作为 shell 命令执行。
 - **模板插值**：`to` 会先经过字面量模板插值，上下文为 `{ pkg, env, PROJECT_NAME }`，因此 `${env.HOME}`、`${pkg.version}`、`${PROJECT_NAME}` 等会被解析为运行时值（`PROJECT_NAME` 为当前目录的basename）
 
 ## 核心
