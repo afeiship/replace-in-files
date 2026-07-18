@@ -83,6 +83,7 @@ replacements:
 | `${...}` | 模板插值 | `to: ${env.HOME}` → 替换为环境变量值 |
 | `$(cmd)` | 命令替换 | `to: $(git rev-parse HEAD)` → 替换为命令输出 |
 | `item: X` | 简写形式 | `item: '${pkg.version}'` → from 和 to 都为该值 |
+| `$(xxx.yyy)` | 命令简写 | `to: $(git.email)` → 替换为 git 邮箱 |
 
 ### 可用模板变量
 
@@ -92,6 +93,24 @@ replacements:
 | `${pkg.version}` | package.json 中的版本号 |
 | `${pkg.name}` | package.json 中的包名 |
 | `${PROJECT_NAME}` | 当前目录名称 |
+
+### 内置命令简写
+
+`$(xxx.yyy)` 格式的简写会自动展开为对应的 shell 命令执行：
+
+| 简写 | 展开命令 | 说明 |
+|------|----------|------|
+| `$(git.email)` | `git config user.email` | Git 邮箱 |
+| `$(git.user)` | `git config user.name` | Git 用户名 |
+| `$(git.remote)` | `git remote get-url origin` | Git 远程仓库地址 |
+| `$(git.branch)` | `git rev-parse --abbrev-ref HEAD` | 当前分支名 |
+| `$(git.hash)` | `git rev-parse --short HEAD` | 当前提交短哈希 |
+| `$(npm.name)` | `node -e "console.log(require('./package.json').name)"` | 包名 |
+| `$(npm.version)` | `node -e "console.log(require('./package.json').version)"` | 包版本 |
+| `$(npm.description)` | `node -e "console.log(require('./package.json').description)"` | 包描述 |
+| `$(node.version)` | `node -v` | Node.js 版本 |
+| `$(date.year)` | `date +%Y` | 当前年份 |
+| `$(date.today)` | `date +%Y-%m-%d` | 当前日期 |
 
 ## License
 
