@@ -1,39 +1,54 @@
 # replace-in-files
 
-> A Node.js CLI tool (`rifc`) that performs text replacements across many files driven by a YAML config file.
+> 一个基于 YAML 配置文件驱动的 Node.js CLI 工具（`rifc`），可批量对多个文件执行文本替换。
 
-`replace-in-files` (npm package `@jswork/replace-in-files`, command `rifc`) lets you declare file globs and a list of replacements in one config file and run them all at once. It is built with `commander` (CLI), `fast-glob` (file discovery, globstar enabled), `replace-in-file` (the actual replacement engine), and `@jswork/next` utilities for YAML config loading and literal-template interpolation.
+`replace-in-files`（npm 包名 `@jswork/replace-in-files`，命令名 `rifc`）允许你在一个 YAML 配置文件中声明文件匹配模式和替换规则，然后一次性执行所有替换。它基于 `commander`（CLI 解析）、`fast-glob`（文件发现，启用 globstar）、`replace-in-file`（替换引擎）以及 `@jswork/next` 工具集（YAML 配置加载和字面量模板插值）构建。
 
-CLI options: `-V, --version`, `-i, --init` (create a config file), `-f, --force` (overwrite an existing config when initializing), `-c, --config <path>` (config file path, default `rif.config.yaml`), `-v, --verbose`, `-h, --help`. Running `rifc` with no `--init` performs the replacements.
+## 命令行选项
 
-The config (`rif.config.yaml` by default) has two keys:
-- `files`: a list of glob patterns matched with `fast-glob` (`globstar: true`). Patterns starting with `!` are negations.
-- `replacements`: a list of replacement rules. Each rule is `{ from, to }`, or the shorthand `{ item: X }` where `from === to === X`.
+- `-V, --version`：输出版本号
+- `-i, --init`：初始化配置文件（默认 `rif.config.yaml`）
+- `-f, --force`：强制覆盖已存在的配置文件（需配合 `--init` 使用）
+- `-c, --config <path>`：指定配置文件路径（默认 `rif.config.yaml`）
+- `-v, --verbose`：详细模式，输出替换过程信息
+- `-h, --help`：显示帮助信息
 
-The `from`/`to` values are interpreted specially by `bin/index.js`:
-- A `from` ending in `/g` (e.g. `/aaa/g`) is treated as a global regular expression.
-- A `from` starting with `$` and containing `{` is converted into a RegExp escaped and applied globally.
-- A `to` wrapped as `$(cmd args)` is executed via `child_process.execSync` and its stdout is used as the replacement value.
-- `to` is first interpolated through a literal template with the context `{ pkg, env, PROJECT_NAME }`, so values like `${env.HOME}`, `${pkg.version}`, and `${PROJECT_NAME}` resolve to runtime values (`PROJECT_NAME` is the current directory's basename).
+不带 `--init` 参数直接运行 `rifc` 即执行替换操作。
 
-## Core
+## 配置文件
 
-- [CLI implementation](bin/index.js): The entire program logic — option parsing, config loading, glob matching, replacement-rule interpretation (regex / template / command substitution), and file rewriting. This is the single source of truth for behavior.
-- [Init config template](config.init.yaml): The YAML config written by `rifc --init`. Doubles as a worked example showing all supported replacement forms (regex, env/pkg templates, command substitution).
+配置文件（默认 `rif.config.yaml`）包含两个核心字段：
 
-## Documentation
+- `files`：文件匹配模式列表，使用 `fast-glob` 匹配（启用 `globstar: true`）。以 `!` 开头的模式为排除规则。
+- `replacements`：替换规则列表。每条规则为 `{ from, to }` 格式，也支持简写 `{ item: X }`（此时 `from === to === X`）。
 
-- [README](README.md): Brief usage and the `rifc -h` output.
-- [Package manifest](package.json): Package metadata, the `rifc` bin entry, npm scripts (`release`, `prepare`, `pretty`), lint-staged rules, and runtime/dev dependencies.
+## 替换规则的特殊语法
 
-## Configuration
+`bin/index.js` 对 `from`/`to` 值有特殊处理：
 
-- [Prettier config](.prettierrc): Code formatting rules (singleQuote, printWidth 100, etc.) applied by `npm run pretty` via the pre-commit hook.
-- [Release config](.release-it.json): `release-it` settings for versioning and GitHub releases.
-- [npm-check-updates config](.ncurc.json): `ncu` settings scoped to `@jswork` / `@afeiship` packages.
-- [Git hooks](.husky/pre-commit): Pre-commit hook running `npx lint-staged`.
-- [Git ignore](.gitignore): Ignored paths (note: `config.yaml` is ignored — use `rif.config.yaml`).
+- **正则表达式**：`from` 以 `/g` 结尾时（如 `/aaa/g`），会被解析为全局正则表达式
+- **变量模式**：`from` 以 `$` 开头且包含 `{` 时，会被转义为 RegExp 并全局匹配
+- **命令替换**：`to` 以 `$(` 开头且以 `)` 结尾时（如 `$(git rev-parse HEAD)`），会通过 `child_process.execSync` 执行命令，将 stdout 作为替换值
+- **模板插值**：`to` 会先经过字面量模板插值，上下文为 `{ pkg, env, PROJECT_NAME }`，因此 `${env.HOME}`、`${pkg.version}`、`${PROJECT_NAME}` 等会被解析为运行时值（`PROJECT_NAME` 为当前目录的basename）
 
-## Optional
+## 核心
 
-- [Lockfile](pnpm-lock.yaml): Resolved dependency versions; useful for exact version archaeology but safe to skip.
+- [CLI 实现](bin/index.js)：完整的程序逻辑——选项解析、配置加载、glob 匹配、替换规则解释（正则/模板/命令替换）以及文件重写。这是行为的唯一真实来源。
+- [初始化配置模板](config.init.yaml)：`rifc --init` 生成的 YAML 配置文件，同时也是一个展示所有支持替换形式的完整示例（正则、环境变量/包信息模板、命令替换）。
+
+## 文档
+
+- [README](README.md)：简要使用说明和 `rifc -h` 输出。
+- [包清单](package.json)：包元数据、`rifc` bin 入口、npm 脚本（`release`、`prepare`、`pretty`）、lint-staged 规则及运行时/开发依赖。
+
+## 配置
+
+- [Prettier 配置](.prettierrc)：代码格式化规则（singleQuote、printWidth 100 等），由 `npm run pretty` 和 pre-commit hook 调用。
+- [Release 配置](.release-it.json)：`release-it` 设置，用于版本管理和 GitHub 发布。
+- [ncu 配置](.ncurc.json)：`ncu` 设置，限定 `@jswork` / `@afeiship` 包范围。
+- [Git hooks](.husky/pre-commit)：Pre-commit hook，执行 `npx lint-staged`。
+- [Git ignore](.gitignore)：忽略路径（注意：`config.yaml` 被忽略——请使用 `rif.config.yaml`）。
+
+## 可选
+
+- [Lockfile](pnpm-lock.yaml)：已解析的依赖版本；可用于精确版本追溯，但可安全跳过。
