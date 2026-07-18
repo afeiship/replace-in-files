@@ -16,6 +16,23 @@ const pkg = loadJsonFileSync(join(__dirname, 'package.json'));
 const program = new Command();
 const initConfigFile = join(__dirname, 'config.init.yaml');
 const env = process.env;
+const SHORTCUTS = {
+  // git
+  'git.email': 'git config user.email',
+  'git.user': 'git config user.name',
+  'git.remote': 'git remote get-url origin',
+  'git.branch': 'git rev-parse --abbrev-ref HEAD',
+  'git.hash': 'git rev-parse --short HEAD',
+  // npm
+  'npm.name': 'node -e "console.log(require(\'./package.json\').name)"',
+  'npm.version': 'node -e "console.log(require(\'./package.json\').version)"',
+  'npm.description': 'node -e "console.log(require(\'./package.json\').description)"',
+  // node
+  'node.version': 'node -v',
+  // date
+  'date.year': 'date +%Y',
+  'date.today': 'date +%Y-%m-%d',
+};
 const cwd = process.cwd();
 
 // predefined context:
