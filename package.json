@@ -45,6 +45,7 @@
     "@jswork/next": "^1.2.10",
     "@jswork/next-literal-tmpl": "^1.0.2",
     "@jswork/next-yaml-configuration": "^1.0.3",
+    "@jswork/replace-in-files": "link:",
     "commander": "^11.1.0",
     "fast-glob": "^3.3.2",
     "load-json-file": "^7.0.1",
