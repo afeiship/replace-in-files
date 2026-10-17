@@ -12,3 +12,7 @@ replacements:
   - item: '${pkg.version}'
   - from: __USAGE__
     to: $(rifc -h)
+  - from: __GIT_EMAIL__
+    to: $(git.email)
+  - from: __NPM_VERSION__
+    to: $(npm.version)
